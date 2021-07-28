@@ -32,29 +32,30 @@ const int MAXG=360;
 
 struct gp{
 	int n;
-	map<pair<int,int>,int> O;
+	int O[MAXG][MAXG];
 }G;
 
 struct subgp{
-	bitset<MAXG> c;
+	unordered_set<int> c;
 	bool maximal;
 	int order(){
-		return c.count();
+		return c.size();
 	}
 }trivial_subgp,full_subgp,tmp_subgp;
 
 void generate_tmp_subgp(int newc){
 	unordered_set<int> new_elem_p,new_elem_q; new_elem_p.insert(newc);
-	tmp_subgp.c.set(newc);
+	tmp_subgp.c.insert(newc);
 	for(;;){
 		new_elem_q.clear();
-		for(int i=0;i<tmp_subgp.c.size();i++) if(tmp_subgp.c.test(i))
-			for(int j:new_elem_p)
-				if(!tmp_subgp.c.test(G.O[make_pair(i,j)]))
-					new_elem_q.insert(G.O[make_pair(i,j)]);
+		for(int i:tmp_subgp.c)
+			for(int j:new_elem_p){
+				if(tmp_subgp.c.find(G.O[i][j])==tmp_subgp.c.end()) new_elem_q.insert(G.O[i][j]);
+				if(tmp_subgp.c.find(G.O[j][i])==tmp_subgp.c.end()) new_elem_q.insert(G.O[j][i]);
+			}
 		if(!new_elem_q.empty()){
 			new_elem_p=new_elem_q;
-			for(int j:new_elem_p) tmp_subgp.c.set(j);
+			for(int j:new_elem_p) tmp_subgp.c.insert(j);
 		}else break;
 	}
 }
@@ -82,16 +83,13 @@ struct subgps{
 };
 
 subgps subgp_finder(){
-	for(int i=0;i<G.n;i++){
-		trivial_subgp.c.reset(i);
-		full_subgp.c.set(i);
-	}
-	trivial_subgp.c.set(0); trivial_subgp.maximal=true; full_subgp.maximal=false;
+	trivial_subgp.c.insert(0); trivial_subgp.maximal=true;
+	for(int i=0;i<G.n;i++) full_subgp.c.insert(i); full_subgp.maximal=false;
 	
 	subgps ret;
 	vector<subgp> bfsq; bfsq.push_back(trivial_subgp); int i=0,j=1;
 	while(i!=j){
-		for(int k=0;k<G.n;k++) if(!bfsq[i].c.test(k)){
+		for(int k=0;k<G.n;k++) if(bfsq[i].c.find(k)==bfsq[i].c.end()){
 			tmp_subgp=bfsq[i]; generate_tmp_subgp(k);
 			if(tmp_subgp.c==full_subgp.c) continue;
 			else bfsq[i].maximal=false;
@@ -106,8 +104,8 @@ subgps subgp_finder(){
 			}
 		}
 		ret.a.push_back(bfsq[i]);
-		if(i%10==0) cerr<<i<<" subgroups have been caught.\n"; 
 		++i;
+		if(i%10==0) cerr<<i<<" subgroups have been caught.\n";
 	}
 	ret.a.push_back(full_subgp);
 	return ret;
@@ -155,7 +153,7 @@ gp alternating_group(int k){
 	for(int s=0;s<retG.n;s++)
 		for(int t=0;t<retG.n;t++){
 			for(int i=0;i<k;i++) perm[i]=perms[t][perms[s][i]];
-			retG.O[make_pair(s,t)]=find(perms.begin(),perms.end(),perm)-perms.begin();
+			retG.O[s][t]=find(perms.begin(),perms.end(),perm)-perms.begin();
 		}
 	return retG;
 }
@@ -170,7 +168,7 @@ void Dunfield_Thurston_2007_upper_bound(int g,subgps subgps_of_G){
 }
 
 int main(){
-	G=alternating_group(5);
+	G=alternating_group(6);
 	subgps subgps_of_G=subgp_finder();
 	subgps_of_G.print();
 	Dunfield_Thurston_2007_upper_bound(2,subgps_of_G);
