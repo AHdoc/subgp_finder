@@ -1,0 +1,44 @@
+Number of conjugacy classes of subgroups: 40
+#0     Order of subgroups:1     number of subgroups:1
+#1     Order of subgroups:3     number of subgroups:35
+#2     Order of subgroups:2     number of subgroups:105
+#3     Order of subgroups:5     number of subgroups:126
+#4     Order of subgroups:4     number of subgroups:315
+#5     Order of subgroups:3     number of subgroups:140
+#6     Order of subgroups:6     number of subgroups:105
+#7     Order of subgroups:7     number of subgroups:120
+#8     Order of subgroups:12     number of subgroups:35
+#9     Order of subgroups:6     number of subgroups:210
+#10     Order of subgroups:60     number of subgroups:21
+#11     Order of subgroups:24     number of subgroups:105
+#12     Order of subgroups:9     number of subgroups:70
+#13     Order of subgroups:360     number of subgroups:7     maximal
+#14     Order of subgroups:36     number of subgroups:70
+#15     Order of subgroups:120     number of subgroups:21     maximal
+#16     Order of subgroups:36     number of subgroups:35
+#17     Order of subgroups:12     number of subgroups:105
+#18     Order of subgroups:4     number of subgroups:35
+#19     Order of subgroups:10     number of subgroups:126
+#20     Order of subgroups:4     number of subgroups:105
+#21     Order of subgroups:8     number of subgroups:315
+#22     Order of subgroups:60     number of subgroups:42
+#23     Order of subgroups:12     number of subgroups:105
+#24     Order of subgroups:6     number of subgroups:420
+#25     Order of subgroups:24     number of subgroups:105
+#26     Order of subgroups:12     number of subgroups:105
+#27     Order of subgroups:20     number of subgroups:126
+#28     Order of subgroups:12     number of subgroups:35
+#29     Order of subgroups:12     number of subgroups:35
+#30     Order of subgroups:12     number of subgroups:35
+#31     Order of subgroups:168     number of subgroups:15     maximal
+#32     Order of subgroups:168     number of subgroups:15     maximal
+#33     Order of subgroups:24     number of subgroups:105
+#34     Order of subgroups:24     number of subgroups:105
+#35     Order of subgroups:24     number of subgroups:105
+#36     Order of subgroups:21     number of subgroups:120
+#37     Order of subgroups:18     number of subgroups:70
+#38     Order of subgroups:72     number of subgroups:35     maximal
+#39     Order of subgroups:2520     number of subgroups:1
+Total: 3786
+Total maximal subgroups: 93
+Dunfield_Thurston_2007_upper_bound = 0.352381
