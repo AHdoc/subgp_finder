@@ -64,7 +64,8 @@ struct gp{
 	void insertTwoGen(unordered_set<int> gen){
 		if(TwoGen.size()<MAXTwoGen)
 			TwoGen.insert(gen);
-		else cerr<<"F"; 
+		else if(TwoGen.size()==MAXTwoGen) 
+			cerr<<"TwoGen.size() = "<<MAXTwoGen<<"\n"; 
 	}
 }G;
 
