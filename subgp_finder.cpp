@@ -64,6 +64,7 @@ struct gp{
 	void insertTwoGen(unordered_set<int> gen){
 		if(TwoGen.size()<MAXTwoGen)
 			TwoGen.insert(gen);
+		else cerr<<"F"; 
 	}
 }G;
 
@@ -86,8 +87,14 @@ void generate_tmp_subgp(int newc){
 		pow_newc=G.O[pow_newc][newc];
 	}
 	for(stage=1;;stage++){
-		for(unordered_set<int> gen:G.TwoGen)
-			if(includes(tmp_subgp.c.begin(),tmp_subgp.c.end(),gen.begin(),gen.end())){
+		auto includes_all = [&](const unordered_set<int> & bigs,const unordered_set<int> & smalls){
+			for(int i:smalls)
+				if(!bigs.count(i))
+					return false;
+			return true; 
+		};
+		for(const unordered_set<int> & gen:G.TwoGen)
+			if(includes_all(tmp_subgp.c,gen)){
 				for(int i=0;i<G.n;i++) tmp_subgp.c.insert(i);
 				stage=-1;
 				break;
@@ -97,15 +104,16 @@ void generate_tmp_subgp(int newc){
 			break;
 		}
 		new_elem_q.clear();
-		for(int i:tmp_subgp.c)
+		auto c=tmp_subgp.c; 
+		for(int i:c)
 			for(int j:new_elem_p){
-				if(tmp_subgp.c.find(G.O[i][j])==tmp_subgp.c.end()) new_elem_q.insert(G.O[i][j]);
-				if(tmp_subgp.c.find(G.O[j][i])==tmp_subgp.c.end()) new_elem_q.insert(G.O[j][i]);
+				if(tmp_subgp.c.insert(G.O[i][j]).second) new_elem_q.insert(G.O[i][j]);
+				if(tmp_subgp.c.insert(G.O[j][i]).second) new_elem_q.insert(G.O[j][i]);
 			}
-		if(!new_elem_q.empty()){
+		if(!new_elem_q.empty())
 			new_elem_p=new_elem_q;
-			for(int j:new_elem_p) tmp_subgp.c.insert(j);
-		}else break;
+		else
+			break;
 	}
 	if(tmp_subgp.c.size()==G.n && stage!=-1)
 		G.insertTwoGen(tmp_subgp.generators);
@@ -254,7 +262,8 @@ void Dunfield_Thurston_2007_upper_bound(int g,subgps subgps_of_G){
 
 int main(){
 	//freopen("A8.txt","w",stdout);
-	G=alternating_group(6);
+	int t; cin>>t;
+	G=alternating_group(t);
 	subgps subgps_of_G=subgp_finder();
 	subgps_of_G.print();
 	Dunfield_Thurston_2007_upper_bound(2,subgps_of_G);
