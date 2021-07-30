@@ -1,6 +1,7 @@
 #include<iostream>
 #include<cstdio>
 #include<cstring>
+#include<cmath> 
 #include<vector>
 #include<set>
 #include<unordered_set>
@@ -8,6 +9,7 @@
 #include<bitset>
 #include<algorithm>
 
+#include<time.h>
 #include<assert.h>
 using namespace std;
 
@@ -26,15 +28,29 @@ template<typename Functor>
 fix_type<typename std::decay<Functor>::type> fix(Functor&& functor)
 { return { std::forward<Functor>(functor) }; }
 
+
+class hashFunctions{
+public:
+	size_t operator()(const unordered_set<int>& s) const{
+		size_t ret=0;
+		for(auto x:s) ret+=x;
+		return ret;
+    }
+};
+
 /***************************************************************************************/
+
+const int MAXTwoGen=5000;
 
 struct gp{
 	int n;
 	vector<vector<int>> O;
 	vector<int> inv;
+	unordered_set<unordered_set<int>,hashFunctions> TwoGen;
 	void resize(int nn){
 		n=nn;
 		O.resize(n,vector<int>(n));
+		TwoGen.clear();
 	}
 	void getinv(){
 		inv.resize(n);
@@ -45,10 +61,15 @@ struct gp{
 					break;
 				}
 	}
+	void insertTwoGen(unordered_set<int> gen){
+		if(TwoGen.size()<MAXTwoGen)
+			TwoGen.insert(gen);
+	}
 }G;
 
 struct subgp{
 	unordered_set<int> c;
+	unordered_set<int> generators;
 	bool maximal;
 	int order(){
 		return c.size();
@@ -57,14 +78,21 @@ struct subgp{
 
 void generate_tmp_subgp(int newc){
 	unordered_set<int> new_elem_p,new_elem_q;
-	int pow_newc=newc;
+	tmp_subgp.generators.insert(newc);
+	int pow_newc=newc,stage;
 	while(tmp_subgp.c.find(pow_newc)==tmp_subgp.c.end()){
 		new_elem_p.insert(pow_newc);
 		tmp_subgp.c.insert(pow_newc);
 		pow_newc=G.O[pow_newc][newc];
 	}
-	for(;;){
-		while(tmp_subgp.c.size()*2>G.n){
+	for(stage=1;;stage++){
+		for(unordered_set<int> gen:G.TwoGen)
+			if(includes(tmp_subgp.c.begin(),tmp_subgp.c.end(),gen.begin(),gen.end())){
+				for(int i=0;i<G.n;i++) tmp_subgp.c.insert(i);
+				stage=-1;
+				break;
+			}
+		if(tmp_subgp.c.size()*2>G.n){
 			for(int i=0;i<G.n;i++) tmp_subgp.c.insert(i);
 			break;
 		}
@@ -79,26 +107,22 @@ void generate_tmp_subgp(int newc){
 			for(int j:new_elem_p) tmp_subgp.c.insert(j);
 		}else break;
 	}
-	cerr<<".";
+	if(tmp_subgp.c.size()==G.n && stage!=-1)
+		G.insertTwoGen(tmp_subgp.generators);
 }
 
 struct subgps{
 	vector<pair<subgp,int>> a;
-	void insert_conjugacy_class(subgp H){
-		vector<subgp> s;
+	unordered_set<unordered_set<int>,hashFunctions> insert_conjugacy_class(subgp H){
+		unordered_set<unordered_set<int>,hashFunctions> s;
 		for(int i=0;i<G.n;i++){
-			subgp H1;
+			unordered_set<int> H1;
 			for (int g:H.c)
-				H1.c.insert(G.O[G.O[i][g]][G.inv[i]]);
-			bool exists=false;
-			for(subgp H2:s)
-				if(H1.c==H2.c){
-					exists=true;
-					break;
-				}
-			if(!exists) s.push_back(H1);
+				H1.insert(G.O[G.O[i][g]][G.inv[i]]);
+			s.insert(H1);
 		}
 		a.push_back(make_pair(H,s.size()));
+		return s;
 	}
 	void print(){
 		map<int,int> order_distribution;
@@ -106,7 +130,7 @@ struct subgps{
 		cout<<"Number of conjugacy classes of subgroups: "<<a.size()<<"\n";
 		for(int i=0;i<a.size();i++){
 			cout<<"#"<<i<<"     ";
-			pair<subgp,int> H=a[i];
+			auto H=a[i];
 			tot+=H.second;
 			cout<<"Order of subgroups:"<<H.first.order()<<"     number of subgroups:"<<H.second<<"     ";
 			if(H.first.maximal){
@@ -138,27 +162,38 @@ subgps subgp_finder(){
 	trivial_subgp.c.insert(0); trivial_subgp.maximal=true;
 	for(int i=0;i<G.n;i++) full_subgp.c.insert(i); full_subgp.maximal=false;
 	
+	timespec ts_beg,ts_end;
+	cerr<<"Start to catch subgroups.\n";
+	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts_beg);
+	
 	subgps ret;
-	vector<subgp> bfsq; bfsq.push_back(trivial_subgp); int i=0,j=1;
-	while(i!=j){
-		for(int k=0;k<G.n;k++) if(bfsq[i].c.find(k)==bfsq[i].c.end()){
-			tmp_subgp=bfsq[i]; generate_tmp_subgp(k);
-			if(tmp_subgp.c==full_subgp.c) continue;
-			else bfsq[i].maximal=false;
-			bool caught=false;
-			for(int l=0;l<j;l++) if(bfsq[l].order()==tmp_subgp.order()){
-				if(check_conjugacy(bfsq[l],tmp_subgp)){
-					caught=true;
-					break;
+	vector<subgp> bfsq; // conjugacy classes of subgroups
+	vector<unordered_set<unordered_set<int>,hashFunctions>> bfsq_all; // all subgroups within the conjugacy class
+	bfsq.push_back(trivial_subgp);
+	bfsq_all.push_back(ret.insert_conjugacy_class(bfsq[0]));
+	for(int i=0,j=1;i!=j;i++){
+		for(int k=0;k<G.n;k++){
+			if(bfsq[i].c.find(k)==bfsq[i].c.end()){
+				tmp_subgp=bfsq[i]; generate_tmp_subgp(k);
+				if(tmp_subgp.c==full_subgp.c) continue;
+				else ret.a[i].first.maximal=false;
+				bool caught=false;
+				for(int l=0;l<j;l++) if(bfsq[l].order()==tmp_subgp.order()){
+					if(bfsq_all[l].find(tmp_subgp.c)!=bfsq_all[l].end()){
+						caught=true;
+						break;
+					}
+				}
+				if(!caught){
+					bfsq.push_back(tmp_subgp);
+					bfsq_all.push_back(ret.insert_conjugacy_class(bfsq[j]));
+					++j;
 				}
 			}
-			if(!caught){
-				bfsq.push_back(tmp_subgp); bfsq[j].maximal=true; ++j;
-			}
 		}
-		ret.insert_conjugacy_class(bfsq[i]);
-		++i;
-		cerr<<i<<" subgroups have been caught.\n";
+		clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts_end);
+		cerr<<i<<" subgroups have been caught. (time: "<<(ts_end.tv_sec-ts_beg.tv_sec)+(ts_end.tv_nsec-ts_beg.tv_nsec)/1e9<<" sec)\n";
+		clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts_beg);
 	}
 	ret.insert_conjugacy_class(full_subgp);
 	return ret;
@@ -168,11 +203,13 @@ gp alternating_group(int k){
 	auto factorial = fix([](auto&& self, int n) -> int { return n < 2 ? 1 : n * self(self, n - 1); });
 	
 	vector<vector<int>> perms;
-	vector<int> perm,c;
-	for(int i=0;i<k;i++) perm.push_back(i);
-	perms.push_back(perm);
-	
-	for(int i=1;i<factorial(k);i++){
+	vector<int> perm;
+	map<vector<int>,int> id;
+	perms.resize(factorial(k)/2,vector<int>(k));
+	perm.resize(k);
+	for(int i=0;i<k;i++) perm[i]=i;
+	perms[0]=perm; 
+	for(int i=1,tot=1;i<factorial(k);i++){
 		int last_inc;
 		for(int j=k-1;j>=1;j--)
 			if(perm[j-1]<perm[j]){
@@ -192,21 +229,15 @@ gp alternating_group(int k){
 				if(perm[ii]>perm[jj])
 					++rev_cnt;
 		if(rev_cnt%2==0)
-			perms.push_back(perm);
-	} 
-	
-	assert(perms.size() == factorial(k)/2);
-	//for(int i=0;i<perms.size();i++){
-	//	for(int j=0;j<k;j++) cerr<<perms[i][j];
-	//	cerr<<"\n";
-	//}
-	
+			perms[tot++]=perm;
+	}
+	for(int i=0;i<perms.size();i++) id[perms[i]]=i;
 	gp retG;
 	retG.resize(factorial(k)/2);
 	for(int s=0;s<retG.n;s++)
 		for(int t=0;t<retG.n;t++){
 			for(int i=0;i<k;i++) perm[i]=perms[t][perms[s][i]];
-			retG.O[s][t]=find(perms.begin(),perms.end(),perm)-perms.begin();
+			retG.O[s][t]=id[perm];
 		}
 	retG.getinv();
 	return retG;
@@ -214,7 +245,7 @@ gp alternating_group(int k){
 
 void Dunfield_Thurston_2007_upper_bound(int g,subgps subgps_of_G){
 	double ans=0.0;
-	for(pair<subgp,int> H:subgps_of_G.a)
+	for(auto H:subgps_of_G.a)
 		if(H.first.maximal)
 			ans+=(double)H.second/pow((double)G.n/(double)H.first.order(),g);
 	cout.precision(6);
@@ -222,7 +253,8 @@ void Dunfield_Thurston_2007_upper_bound(int g,subgps subgps_of_G){
 }
 
 int main(){
-	G=alternating_group(7);
+	//freopen("A8.txt","w",stdout);
+	G=alternating_group(6);
 	subgps subgps_of_G=subgp_finder();
 	subgps_of_G.print();
 	Dunfield_Thurston_2007_upper_bound(2,subgps_of_G);
