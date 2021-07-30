@@ -78,7 +78,7 @@ struct subgp{
 	}
 }trivial_subgp,full_subgp,tmp_subgp;
 
-void generate_tmp_subgp(int newc){
+bool generate_tmp_subgp(int newc){
 	unordered_set<int> new_elem_p,new_elem_q;
 	tmp_subgp.generators.insert(newc);
 	int pow_newc=newc,stage;
@@ -96,14 +96,13 @@ void generate_tmp_subgp(int newc){
 		};
 		for(const unordered_set<int> & gen:G.TwoGen)
 			if(includes_all(tmp_subgp.c,gen)){
-				for(int i=0;i<G.n;i++) tmp_subgp.c.insert(i);
 				stage=-1;
 				break;
 			}
-		if(tmp_subgp.c.size()*2>G.n){
-			for(int i=0;i<G.n;i++) tmp_subgp.c.insert(i);
+		if(tmp_subgp.c.size()*2>G.n)
+			stage=-2;
+		if(stage<0)
 			break;
-		}
 		new_elem_q.clear();
 		auto c=tmp_subgp.c; 
 		for(int i:c)
@@ -116,8 +115,13 @@ void generate_tmp_subgp(int newc){
 		else
 			break;
 	}
-	if(tmp_subgp.c.size()==G.n && stage!=-1)
+	if(stage==-1)
+		return true;
+	else if(stage==-2 || tmp_subgp.c.size()==G.n){
 		G.insertTwoGen(tmp_subgp.generators);
+		return true;
+	}else
+		return false;
 }
 
 struct subgps{
@@ -183,9 +187,11 @@ subgps subgp_finder(){
 	for(int i=0,j=1;i!=j;i++){
 		for(int k=0;k<G.n;k++){
 			if(bfsq[i].c.find(k)==bfsq[i].c.end()){
-				tmp_subgp=bfsq[i]; generate_tmp_subgp(k);
-				if(tmp_subgp.c==full_subgp.c) continue;
-				else ret.a[i].first.maximal=false;
+				tmp_subgp=bfsq[i];
+				if(generate_tmp_subgp(k))
+					continue;
+				else
+					ret.a[i].first.maximal=false;
 				bool caught=false;
 				for(int l=0;l<j;l++) if(bfsq[l].order()==tmp_subgp.order()){
 					if(bfsq_all[l].find(tmp_subgp.c)!=bfsq_all[l].end()){
