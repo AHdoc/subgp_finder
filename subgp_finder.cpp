@@ -5,6 +5,7 @@
 #include<vector>
 #include<set>
 #include<unordered_set>
+#include<unordered_map>
 #include<map>
 #include<bitset>
 #include<algorithm>
@@ -31,6 +32,10 @@ fix_type<typename std::decay<Functor>::type> fix(Functor&& functor)
 
 class hashFunctions{
 public:
+	size_t operator()(const pair<int,int>& s) const{
+		size_t ret=s.first+s.second;
+		return ret;
+    }
 	size_t operator()(const unordered_set<int>& s) const{
 		size_t ret=0;
 		for(auto x:s) ret+=x;
@@ -40,17 +45,19 @@ public:
 
 /***************************************************************************************/
 
-const int MAXTwoGen=5000;
+const int MAXgeneratingPairs=5000;
 
 struct gp{
 	int n;
 	vector<vector<int>> O;
-	vector<int> inv;
-	unordered_set<unordered_set<int>,hashFunctions> TwoGen;
+	vector<int> inv,idx_cyclicgroup,generator_cyclicgroup;
+	unordered_set<pair<int,int>,hashFunctions> generatingPairs; // instead of storing generators, we save their cyclic groups 
+	int tot_cyclicgroups;
+	vector<unordered_set<int>> cyclicgroups;
 	void resize(int nn){
 		n=nn;
 		O.resize(n,vector<int>(n));
-		TwoGen.clear();
+		generatingPairs.clear();
 	}
 	void getinv(){
 		inv.resize(n);
@@ -61,11 +68,32 @@ struct gp{
 					break;
 				}
 	}
-	void insertTwoGen(unordered_set<int> gen){
-		if(TwoGen.size()<MAXTwoGen)
-			TwoGen.insert(gen);
-		else if(TwoGen.size()==MAXTwoGen) 
-			cerr<<"TwoGen.size() = "<<MAXTwoGen<<"\n"; 
+	void getcyclicgroups(){
+		tot_cyclicgroups=0;
+		idx_cyclicgroup.resize(n);
+		unordered_map<unordered_set<int>,int,hashFunctions> __cyclicgroups;
+		for(int i=0;i<n;i++){
+			int x=0;
+			unordered_set<int> H;
+			for(;;){
+				H.insert(x);
+				x=O[x][i];
+				if(x==0) break;
+			}
+			if(!__cyclicgroups.count(H)){
+				generator_cyclicgroup.push_back(i);
+				cyclicgroups.push_back(unordered_set<int>{}); 
+				__cyclicgroups[H]=tot_cyclicgroups++;
+			}
+			idx_cyclicgroup[i]=__cyclicgroups[H];
+			cyclicgroups[idx_cyclicgroup[i]].insert(i);
+		}
+	}
+	void insertgeneratingPairs(pair<int,int> gen){
+		if(generatingPairs.size()<MAXgeneratingPairs)
+			generatingPairs.insert(gen);
+		else if(generatingPairs.size()==MAXgeneratingPairs)
+			cerr<<"generatingPairs.size() = "<<MAXgeneratingPairs<<"\n"; 
 	}
 }G;
 
@@ -88,17 +116,21 @@ bool generate_tmp_subgp(int newc){
 		pow_newc=G.O[pow_newc][newc];
 	}
 	for(stage=1;;stage++){
-		auto includes_all = [&](const unordered_set<int> & bigs,const unordered_set<int> & smalls){
-			for(int i:smalls)
-				if(!bigs.count(i))
-					return false;
-			return true; 
+		auto includes_all = [&](const unordered_set<int> & bigs,const int & g1,const int & g2){
+			return (bigs.count(g1) && bigs.count(g2));
 		};
-		for(const unordered_set<int> & gen:G.TwoGen)
-			if(includes_all(tmp_subgp.c,gen)){
-				stage=-1;
-				break;
+		for(const pair<int,int> & gen:G.generatingPairs){
+			for(int g1:G.cyclicgroups[gen.first]){
+				for(int g2:G.cyclicgroups[gen.second]){
+					if(includes_all(tmp_subgp.c,g1,g2)){
+						stage=-1;
+						break;
+					}
+				}
+				if(stage==-1) break;
 			}
+			if(stage==-1) break;
+		}
 		if(tmp_subgp.c.size()*2>G.n)
 			stage=-2;
 		if(stage<0)
@@ -118,7 +150,16 @@ bool generate_tmp_subgp(int newc){
 	if(stage==-1)
 		return true;
 	else if(stage==-2 || tmp_subgp.c.size()==G.n){
-		G.insertTwoGen(tmp_subgp.generators);
+		auto elements2pairofcyclicgroups = [&](const unordered_set<int> & elems){
+			int r1=-1,r2=-1;
+			for(int g:elems){
+				if(r1==-1) r1=G.idx_cyclicgroup[g];
+				else r2=G.idx_cyclicgroup[g];
+			}
+			return make_pair(r1,r2);
+		};
+		if(tmp_subgp.generators.size()==2)
+			G.insertgeneratingPairs(elements2pairofcyclicgroups(tmp_subgp.generators));
 		return true;
 	}else
 		return false;
@@ -185,7 +226,9 @@ subgps subgp_finder(){
 	bfsq.push_back(trivial_subgp);
 	bfsq_all.push_back(ret.insert_conjugacy_class(bfsq[0]));
 	for(int i=0,j=1;i!=j;i++){
-		for(int k=0;k<G.n;k++){
+		//for(int k=0;k<G.n;k++){
+		for(int kk=0;kk<G.tot_cyclicgroups;kk++){
+			int k=G.generator_cyclicgroup[kk];
 			if(bfsq[i].c.find(k)==bfsq[i].c.end()){
 				tmp_subgp=bfsq[i];
 				if(generate_tmp_subgp(k))
@@ -255,6 +298,7 @@ gp alternating_group(int k){
 			retG.O[s][t]=id[perm];
 		}
 	retG.getinv();
+	retG.getcyclicgroups();
 	return retG;
 }
 
