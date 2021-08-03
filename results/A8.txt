@@ -1,0 +1,145 @@
+Number of conjugacy classes of subgroups: 137
+#0     Order of subgroups:1     number of subgroups:1
+#1     Order of subgroups:3     number of subgroups:56
+#2     Order of subgroups:2     number of subgroups:210
+#3     Order of subgroups:5     number of subgroups:336
+#4     Order of subgroups:4     number of subgroups:1260
+#5     Order of subgroups:3     number of subgroups:560
+#6     Order of subgroups:6     number of subgroups:840
+#7     Order of subgroups:7     number of subgroups:960
+#8     Order of subgroups:2     number of subgroups:105
+#9     Order of subgroups:6     number of subgroups:1680
+#10     Order of subgroups:15     number of subgroups:336
+#11     Order of subgroups:4     number of subgroups:630
+#12     Order of subgroups:12     number of subgroups:70
+#13     Order of subgroups:6     number of subgroups:560
+#14     Order of subgroups:60     number of subgroups:56
+#15     Order of subgroups:24     number of subgroups:420
+#16     Order of subgroups:9     number of subgroups:280
+#17     Order of subgroups:360     number of subgroups:28
+#18     Order of subgroups:36     number of subgroups:280
+#19     Order of subgroups:120     number of subgroups:168
+#20     Order of subgroups:36     number of subgroups:280
+#21     Order of subgroups:12     number of subgroups:840
+#22     Order of subgroups:2520     number of subgroups:8     maximal
+#23     Order of subgroups:24     number of subgroups:210
+#24     Order of subgroups:18     number of subgroups:560
+#25     Order of subgroups:720     number of subgroups:28     maximal
+#26     Order of subgroups:18     number of subgroups:560
+#27     Order of subgroups:180     number of subgroups:56
+#28     Order of subgroups:48     number of subgroups:210
+#29     Order of subgroups:288     number of subgroups:35
+#30     Order of subgroups:288     number of subgroups:35
+#31     Order of subgroups:4     number of subgroups:70
+#32     Order of subgroups:10     number of subgroups:336
+#33     Order of subgroups:4     number of subgroups:420
+#34     Order of subgroups:8     number of subgroups:1260
+#35     Order of subgroups:60     number of subgroups:168
+#36     Order of subgroups:12     number of subgroups:420
+#37     Order of subgroups:6     number of subgroups:1680
+#38     Order of subgroups:24     number of subgroups:420
+#39     Order of subgroups:12     number of subgroups:840
+#40     Order of subgroups:20     number of subgroups:1008
+#41     Order of subgroups:12     number of subgroups:280
+#42     Order of subgroups:12     number of subgroups:280
+#43     Order of subgroups:12     number of subgroups:280
+#44     Order of subgroups:168     number of subgroups:120
+#45     Order of subgroups:168     number of subgroups:120
+#46     Order of subgroups:24     number of subgroups:840
+#47     Order of subgroups:24     number of subgroups:840
+#48     Order of subgroups:24     number of subgroups:840
+#49     Order of subgroups:4     number of subgroups:315
+#50     Order of subgroups:4     number of subgroups:630
+#51     Order of subgroups:48     number of subgroups:210
+#52     Order of subgroups:120     number of subgroups:168
+#53     Order of subgroups:36     number of subgroups:280
+#54     Order of subgroups:8     number of subgroups:1260
+#55     Order of subgroups:24     number of subgroups:420
+#56     Order of subgroups:36     number of subgroups:280
+#57     Order of subgroups:12     number of subgroups:1680
+#58     Order of subgroups:48     number of subgroups:420
+#59     Order of subgroups:30     number of subgroups:336
+#60     Order of subgroups:8     number of subgroups:630
+#61     Order of subgroups:16     number of subgroups:630
+#62     Order of subgroups:8     number of subgroups:315
+#63     Order of subgroups:576     number of subgroups:35     maximal
+#64     Order of subgroups:72     number of subgroups:280
+#65     Order of subgroups:1344     number of subgroups:15     maximal
+#66     Order of subgroups:1344     number of subgroups:15     maximal
+#67     Order of subgroups:360     number of subgroups:56     maximal
+#68     Order of subgroups:192     number of subgroups:105
+#69     Order of subgroups:192     number of subgroups:105
+#70     Order of subgroups:32     number of subgroups:315
+#71     Order of subgroups:24     number of subgroups:420
+#72     Order of subgroups:48     number of subgroups:420
+#73     Order of subgroups:24     number of subgroups:420
+#74     Order of subgroups:48     number of subgroups:420
+#75     Order of subgroups:96     number of subgroups:210
+#76     Order of subgroups:8     number of subgroups:630
+#77     Order of subgroups:96     number of subgroups:105
+#78     Order of subgroups:16     number of subgroups:315
+#79     Order of subgroups:8     number of subgroups:630
+#80     Order of subgroups:96     number of subgroups:105
+#81     Order of subgroups:16     number of subgroups:315
+#82     Order of subgroups:96     number of subgroups:105
+#83     Order of subgroups:96     number of subgroups:105
+#84     Order of subgroups:16     number of subgroups:315
+#85     Order of subgroups:192     number of subgroups:105
+#86     Order of subgroups:60     number of subgroups:336
+#87     Order of subgroups:24     number of subgroups:420
+#88     Order of subgroups:32     number of subgroups:315
+#89     Order of subgroups:32     number of subgroups:315
+#90     Order of subgroups:21     number of subgroups:960
+#91     Order of subgroups:6     number of subgroups:560
+#92     Order of subgroups:168     number of subgroups:120
+#93     Order of subgroups:168     number of subgroups:120
+#94     Order of subgroups:168     number of subgroups:120
+#95     Order of subgroups:96     number of subgroups:35
+#96     Order of subgroups:96     number of subgroups:35
+#97     Order of subgroups:12     number of subgroups:420
+#98     Order of subgroups:144     number of subgroups:35
+#99     Order of subgroups:24     number of subgroups:420
+#100     Order of subgroups:24     number of subgroups:420
+#101     Order of subgroups:24     number of subgroups:840
+#102     Order of subgroups:12     number of subgroups:420
+#103     Order of subgroups:24     number of subgroups:420
+#104     Order of subgroups:24     number of subgroups:420
+#105     Order of subgroups:48     number of subgroups:70
+#106     Order of subgroups:56     number of subgroups:120
+#107     Order of subgroups:56     number of subgroups:120
+#108     Order of subgroups:4     number of subgroups:105
+#109     Order of subgroups:4     number of subgroups:105
+#110     Order of subgroups:8     number of subgroups:315
+#111     Order of subgroups:8     number of subgroups:315
+#112     Order of subgroups:8     number of subgroups:630
+#113     Order of subgroups:8     number of subgroups:210
+#114     Order of subgroups:18     number of subgroups:280
+#115     Order of subgroups:72     number of subgroups:280
+#116     Order of subgroups:288     number of subgroups:35
+#117     Order of subgroups:8     number of subgroups:210
+#118     Order of subgroups:32     number of subgroups:105
+#119     Order of subgroups:32     number of subgroups:105
+#120     Order of subgroups:8     number of subgroups:105
+#121     Order of subgroups:16     number of subgroups:630
+#122     Order of subgroups:16     number of subgroups:315
+#123     Order of subgroups:32     number of subgroups:315
+#124     Order of subgroups:64     number of subgroups:315
+#125     Order of subgroups:96     number of subgroups:105
+#126     Order of subgroups:48     number of subgroups:35
+#127     Order of subgroups:48     number of subgroups:35
+#128     Order of subgroups:8     number of subgroups:315
+#129     Order of subgroups:16     number of subgroups:315
+#130     Order of subgroups:16     number of subgroups:315
+#131     Order of subgroups:16     number of subgroups:630
+#132     Order of subgroups:8     number of subgroups:15
+#133     Order of subgroups:8     number of subgroups:15
+#134     Order of subgroups:16     number of subgroups:35
+#135     Order of subgroups:32     number of subgroups:105
+#136     Order of subgroups:20160     number of subgroups:1
+Total: 48337
+Total maximal subgroups: 157
+Dunfield_Thurston_2007_upper_bound = 0.340476
+
+real    604m31.691s
+user    603m55.625s
+sys     0m3.234s
